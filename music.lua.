@@ -1,0 +1,100 @@
+
+-- CEMOON MUSIC PLAYER
+-- LocalScript | Roblox Studio
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "CemoonMusic"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.fromOffset(240, 230)
+frame.Position = UDim2.new(0.5, -120, 0.5, -115)
+frame.BackgroundColor3 = Color3.fromRGB(30, 20, 45)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 15)
+corner.Parent = frame
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "☾ CEMOON MUSIC"
+title.TextColor3 = Color3.fromRGB(220, 180, 255)
+title.TextSize = 19
+title.Parent = frame
+
+local input = Instance.new("TextBox")
+input.Size = UDim2.new(0.85, 0, 0, 38)
+input.Position = UDim2.new(0.075, 0, 0, 55)
+input.PlaceholderText = "Masukkan Music ID"
+input.Text = ""
+input.TextSize = 15
+input.Parent = frame
+
+local sound = Instance.new("Sound")
+sound.Name = "CemoonAudio"
+sound.Volume = 0.5
+sound.Parent = game:GetService("SoundService")
+
+local function makeButton(text, x, y)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.fromOffset(85, 38)
+    button.Position = UDim2.new(x, 0, 0, y)
+    button.Text = text
+    button.TextSize = 15
+    button.BackgroundColor3 = Color3.fromRGB(110, 60, 160)
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.Parent = frame
+
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 8)
+    c.Parent = button
+
+    return button
+end
+
+local play = makeButton("▶ PLAY", 0.12, 110)
+local stop = makeButton("■ STOP", 0.53, 110)
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1, 0, 0, 35)
+status.Position = UDim2.new(0, 0, 0, 165)
+status.BackgroundTransparency = 1
+status.Text = "Ready to play"
+status.TextColor3 = Color3.fromRGB(210, 180, 230)
+status.TextSize = 13
+status.Parent = frame
+
+play.Activated:Connect(function()
+    local id = input.Text
+
+    if not id:match("^%d+$") then
+        status.Text = "Music ID tidak valid!"
+        return
+    end
+
+    sound:Stop()
+    sound.SoundId = "rbxassetid://" .. id
+    sound:Play()
+    status.Text = "Memuat audio..."
+end)
+
+sound.Loaded:Connect(function()
+    status.Text = "♫ Playing"
+end)
+
+sound.Ended:Connect(function()
+    status.Text = "♫ Finished"
+end)
+
+stop.Activated:Connect(function()
+    sound:Stop()
+    status.Text = "Stopped"
+end)
